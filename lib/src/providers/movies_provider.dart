@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:movies/src/models/actors_model.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:movies/src/models/movie_model.dart';
@@ -26,6 +27,33 @@ class MoviesProvider {
     final url = Uri.https(_url, "3/movie/popular", { // Url con el endpoint
       "api_key" : _apikey, // Argumentos
       "language" : _language
+    });
+
+    final response = await http.get(url); // Hacer la petición
+    final decodedData = json.decode(response.body);
+    final movies = new Movies.fromJsonList(decodedData["results"]); // Crear una lista de Movies con los datos recibidos
+    return movies.items;
+  }
+
+  // Función get cast
+  Future<List<Actor>> getCast(String movieId) async {
+    final url = Uri.https(_url, "3/movie/$movieId/credits", { // Url con el endpoint
+      "api_key" : _apikey, // Argumentos
+      "language" : _language
+    });
+
+    final response = await http.get(url); // Hacer la petición
+    final decodedData = json.decode(response.body);
+    final cast = new Cast.fromJsonList(decodedData["cast"]); // Crear una lista de actores con los datos recibidos
+    return cast.items;
+  }
+
+  // Función search movie
+  Future<List<Movie>> searchMovie(String query) async {
+    final url = Uri.https(_url, "3/search/movie", { // Url con el endpoint
+      "api_key" : _apikey, // Argumentos
+      "language" : _language,
+      "query" : query
     });
 
     final response = await http.get(url); // Hacer la petición

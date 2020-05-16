@@ -28,23 +28,36 @@ class MovieHorizontal extends StatelessWidget {
 
   List<Widget> _cards(BuildContext context) {
     return movies.map((movie) {
-      return Container(
-        margin: EdgeInsets.only(right: 15.0),
-        child: Column(
-          children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: FadeInImage(
-                image: NetworkImage(movie.getPosterImg()),
-                placeholder: AssetImage("assets/no-image.jpg"),
-                fit: BoxFit.cover,
-                height: 100.0,
-              )
+
+      movie.uniqueId = "${ movie.id  }-poster";
+
+      // Listener para cuando se haga click en una card
+      return GestureDetector (
+          child: Container(
+            margin: EdgeInsets.only(right: 15.0),
+            child: Column(
+              children: <Widget>[
+                Hero( // Para hacer una transición entre la imagen del homepage y la de la vista detalle
+                  tag: movie.uniqueId, // Mismo tag que el de la imagen de la vista detalle
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20.0),
+                    child: FadeInImage(
+                      image: NetworkImage(movie.getPosterImg()),
+                      placeholder: AssetImage("assets/no-image.jpg"),
+                      fit: BoxFit.cover,
+                      height: 100.0,
+                    )
+                  ),
+                ),
+                SizedBox(height: 3),
+                Text(movie.title, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.caption)
+              ],
             ),
-            SizedBox(height: 3),
-            Text(movie.title, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.caption)
-          ],
-        ),
+          ),
+          onTap: () {
+            // Navegar a la vista detalle pasándole la movie
+            Navigator.pushNamed(context, "detail", arguments: movie);
+          },
       );
     }).toList();
   }
